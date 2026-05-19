@@ -1,0 +1,10 @@
+Password resets require identity verification and a reset link. If the customer is locked out after multiple failed attempts, create a support ticket.
+Refund requests require the order ID, customer email, and reason for refund. Finance approvals are required for refunds above 1000 RMB.
+VPN connection failures should be routed to the network team after confirming the customer's device, error message, and office location.
+Account access for VIP customers should be escalated immediately if the issue blocks login for more than 30 minutes.
+Invoice correction requests must include the original invoice number, updated company information, and the business justification.
+登录问题通常需要先完成身份校验，并通过重置链接修改密码。如果多次尝试后仍然无法登录，应创建支持工单。
+退款申请需要提供订单号、客户邮箱和退款原因。超过 1000 元人民币的退款需要财务审批。
+VPN 连接失败时，应先确认客户设备、报错信息和办公地点，再转交网络团队。
+VIP 客户如果 30 分钟以上无法登录，应立即升级处理。
+发票更正申请需要提供原发票编号、更新后的公司信息以及业务说明。

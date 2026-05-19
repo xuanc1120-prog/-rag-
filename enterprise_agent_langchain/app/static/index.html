@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LangChain Enterprise Agent</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="eyebrow">LangChain Edition</div>
+          <h1>企业支持 Agent</h1>
+          <p>这是一套基于 LangChain Agent 与工具调用的版本，便于和原始手写实现做对照学习。</p>
+        </div>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>运行状态</h2>
+            <button id="refreshStatusBtn" class="icon-button" type="button" title="刷新">↻</button>
+          </div>
+          <div class="status-grid">
+            <div><span class="label">状态</span><strong id="healthStatus">检测中</strong></div>
+            <div><span class="label">Provider</span><strong id="healthProvider">-</strong></div>
+            <div><span class="label">模型</span><strong id="healthModel">-</strong></div>
+            <div><span class="label">栈</span><strong id="healthStack">langchain</strong></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>快捷问题</h2>
+          </div>
+          <div id="quickPrompts" class="quick-prompts">
+            <button type="button" class="prompt-chip" data-question="我现在登不上账号，该怎么办？">登录受阻</button>
+            <button type="button" class="prompt-chip" data-question="客户申请退款，需要准备哪些信息？">退款申请</button>
+            <button type="button" class="prompt-chip" data-question="VPN 连不上，应该怎么排查？">VPN 故障</button>
+            <button type="button" class="prompt-chip" data-question="VIP 客户超过 30 分钟无法登录，需要怎么处理？">VIP 升级</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>手动建单</h2>
+          </div>
+          <form id="ticketForm" class="form-stack">
+            <label><span>标题</span><input id="ticketTitle" type="text" required /></label>
+            <label><span>问题描述</span><textarea id="ticketIssue" rows="4" required></textarea></label>
+            <div class="form-row">
+              <label>
+                <span>优先级</span>
+                <select id="ticketPriority">
+                  <option value="low">low</option>
+                  <option value="medium" selected>medium</option>
+                  <option value="high">high</option>
+                </select>
+              </label>
+              <label><span>客户邮箱</span><input id="ticketEmail" type="email" required /></label>
+            </div>
+            <button class="primary-button" type="submit">创建工单</button>
+            <p id="ticketFeedback" class="feedback"></p>
+          </form>
+        </section>
+      </aside>
+
+      <main class="main-layout">
+        <section class="workspace">
+          <div class="workspace-header">
+            <div>
+              <div class="eyebrow">LangChain Agent</div>
+              <h2>支持对话</h2>
+            </div>
+            <div class="toolbar">
+              <button id="clearChatBtn" class="secondary-button" type="button">清空会话</button>
+              <a class="secondary-button link-button" href="/docs" target="_blank" rel="noreferrer">API 文档</a>
+            </div>
+          </div>
+
+          <div id="chatFeed" class="chat-feed">
+            <div class="empty-state">
+              <h3>让 LangChain 版本先接一轮支持问题</h3>
+              <p>你可以直接提问，也可以点击左侧快捷问题，观察它如何调工具、查知识库、推进工单。</p>
+            </div>
+          </div>
+
+          <form id="chatForm" class="composer">
+            <label class="composer-field">
+              <span class="sr-only">问题输入框</span>
+              <textarea id="questionInput" rows="3" placeholder="输入客户问题或继续追问" required></textarea>
+            </label>
+            <div class="composer-actions">
+              <span id="chatFeedback" class="feedback"></span>
+              <button id="sendBtn" class="primary-button" type="submit">发送问题</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="inspector">
+          <div class="panel inspector-panel">
+            <div class="panel-header">
+              <h2>消息轨迹</h2>
+              <button id="toggleTraceBtn" class="icon-button" type="button" title="折叠/展开">▾</button>
+            </div>
+            <div id="traceContainer" class="trace-container">
+              <pre id="traceOutput">[]</pre>
+            </div>
+          </div>
+
+          <div class="panel tickets-panel">
+            <div class="panel-header">
+              <h2>未关闭工单</h2>
+              <button id="refreshTicketsBtn" class="icon-button" type="button" title="刷新">↻</button>
+            </div>
+            <div id="ticketList" class="ticket-list">
+              <div class="muted">正在加载工单列表…</div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
+

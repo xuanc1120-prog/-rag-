@@ -1,0 +1,5 @@
+Password resets require identity verification and a reset link. If the customer is locked out after multiple failed attempts, create a support ticket.
+Refund requests require the order ID, customer email, and reason for refund. Finance approvals are required for refunds above 1000 RMB.
+VPN connection failures should be routed to the network team after confirming the customer's device, error message, and office location.
+Account access for VIP customers should be escalated immediately if the issue blocks login for more than 30 minutes.
+Invoice correction requests must include the original invoice number, updated company information, and the business justification.
