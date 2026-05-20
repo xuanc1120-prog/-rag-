@@ -1,37 +1,107 @@
 # 企业知识库问答与工单协同 Agent MVP
 
-这是一个适合用于**实习简历、面试展示和本地演示**的 AI 应用项目。  
-它模拟了一个企业内部支持 Agent，能够：
+这是一个面向 **AI 应用开发实习 / Agent 应用实习** 展示的项目。  
+它模拟企业内部支持场景：用户先向 Agent 提问，Agent 优先检索知识库；如果问题无法直接解决，则通过工具调用创建或升级工单，把问答流程衔接到后续处理流程中。
 
-- 结合知识库进行问题回答
-- 在回答过程中调用工具
-- 创建、查询和升级工单
-- 在 `OpenAI 兼容接口` 与 `Anthropic 接口` 之间切换
-- 通过简单的 FastAPI 接口本地演示
+## 项目价值
 
-## 这个项目为什么有价值
-
-这个 MVP 重点展示了很多 AI 应用开发实习岗位真正看重的能力：
+这个项目不是单纯的聊天机器人，而是一个带有业务闭环的 Agent 原型。它重点展示了下面这些更贴近真实岗位需求的能力：
 
 - 大模型 API 接入
 - Agent Loop 设计
 - Tool Calling（工具调用）
 - 轻量级 RAG
-- Provider 兼容层设计
+- 多模型提供方兼容层设计
 - 面向业务流程的 AI 应用原型开发
+
+## 这个项目解决什么问题
+
+在企业支持场景里，常见问题通常会经历这几个阶段：
+
+1. 用户发起问题
+2. 系统优先查询已有知识库
+3. 如果知识库无法解决，则需要升级处理
+4. 将未解决问题转成结构化工单
+
+这个项目把这条链路做成了一个可运行的 MVP，用来验证：
+
+- Agent 是否能先检索再回答
+- Agent 是否能在合适的时机调用工具
+- 系统是否能从“回答问题”过渡到“处理问题”
+
+## 核心功能
+
+- 企业知识库问答
+- 多轮对话支持（由客户端显式传入历史消息）
+- 创建工单、查询工单、升级工单
+- `OpenAI-compatible` / `Anthropic` 两种 provider 切换
+- 本地前端控制台 + FastAPI API
+
+## 技术栈
+
+- Python
+- FastAPI
+- SQLite
+- 自定义 Agent Loop
+- 自定义 Provider 适配层
+- 轻量级检索器（非向量库版 RAG）
+
+## 设计亮点
+
+### 1. Provider 兼容层
+
+项目定义了一套统一的 `LLMProvider` 接口，并分别实现：
+
+- `OpenAICompatibleProvider`
+- `AnthropicProvider`
+
+这样做的好处是：  
+Agent 主流程不需要关心不同模型接口在消息结构、工具调用格式上的差异，后续切换模型提供方时改动更小，也更适合在面试里讲清楚“为什么要做抽象层”。
+
+### 2. 轻量级 RAG
+
+这个项目没有一上来就接向量数据库，而是先做了一个轻量、可解释、可测试的检索器。
+
+这样做的原因是：
+
+- 更适合 MVP 快速验证
+- 更方便阅读和讲解
+- 更容易写单元测试
+
+如果后续继续扩展，可以自然升级到：
+
+- embedding 检索
+- 向量数据库
+- 更正式的 RAG 评测流程
+
+### 3. 工单协同
+
+项目不仅能回答问题，还能把未解决的问题转成工单，当前支持的核心流程包括：
+
+- 创建工单
+- 查询工单
+- 升级工单
+
+这让项目从“问答 demo”变成了“带业务动作的 AI 应用原型”。
+
+### 4. 错误处理
+
+针对模型调用失败、网络错误、返回结构异常等问题，provider 层做了统一错误包装，API 层返回明确的错误状态，避免把所有问题都变成难以定位的裸 `500`。
 
 ## 项目结构
 
 ```text
 enterprise_agent_mvp/
   app/
-    agent/        # Agent 循环与工具执行
+    agent/        # Agent loop 与工具调度
     db/           # SQLite 工单持久化
-    providers/    # OpenAI兼容接口与Anthropic适配层
-    rag/          # 轻量级检索器
-    tools/        # 知识库与工单工具
-    config.py     # 环境变量与配置加载
-    main.py       # FastAPI 应用入口
+    providers/    # OpenAI-compatible / Anthropic 适配层
+    rag/          # 轻量级知识检索
+    tools/        # 工单工具与业务动作
+    static/       # 本地前端控制台
+    config.py     # 配置加载
+    main.py       # FastAPI 入口
+    models.py     # 统一数据结构
   data/
     knowledge_base.txt
   tests/
@@ -39,7 +109,9 @@ enterprise_agent_mvp/
   requirements.txt
 ```
 
-## 环境准备
+## 如何运行
+
+### 1. 创建环境并安装依赖
 
 ```bash
 python -m venv .venv
@@ -48,112 +120,77 @@ pip install -r requirements.txt
 copy .env.example .env
 ```
 
-根据你要使用的模型提供方，修改 `.env`：
+### 2. 配置 `.env`
 
-- `LLM_PROVIDER=openai_compatible`
-- 或 `LLM_PROVIDER=anthropic`
+根据你要使用的模型提供方，选择其中一组：
+
+```env
+LLM_PROVIDER=openai_compatible
+OPENAI_API_KEY=your-key
+OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_MODEL=gpt-4o-mini
+```
+
+或：
+
+```env
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=your-key
+ANTHROPIC_BASE_URL=https://api.anthropic.com/v1
+ANTHROPIC_MODEL=claude-3-5-sonnet-latest
+```
 
 程序启动时会自动读取本地 `.env` 文件。
 
-## 运行测试
+### 3. 运行测试
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-## 启动 API 服务
+### 4. 启动服务
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-## 接口示例
+启动后可访问：
 
-### 健康检查
+- 前端控制台：`http://127.0.0.1:8000/`
+- API 文档：`http://127.0.0.1:8000/docs`
+- 健康检查：`http://127.0.0.1:8000/health`
 
-```bash
-curl http://127.0.0.1:8000/health
-```
+## 推荐阅读顺序
 
-### 单轮聊天
+如果你是面试官，或者准备快速理解项目，建议按下面顺序看：
 
-```bash
-curl -X POST http://127.0.0.1:8000/chat ^
-  -H "Content-Type: application/json" ^
-  -d "{\"question\":\"我现在登不上账号，该怎么办？\"}"
-```
+1. `app/main.py`  
+   看整个请求是怎么进入系统的
+2. `app/providers/`  
+   看模型提供方兼容层怎么设计
+3. `app/agent/engine.py`  
+   看 Agent Loop 的核心逻辑
+4. `app/tools/ticket_tools.py`  
+   看工具调用最终如何落到业务动作
+5. `app/rag/retriever.py`  
+   看知识检索的实现方式
+6. `app/db/ticket_repository.py`  
+   看工单如何持久化
 
-### 多轮聊天
+## 面试时可以怎么讲
 
-```bash
-curl -X POST http://127.0.0.1:8000/chat ^
-  -H "Content-Type: application/json" ^
-  -d "{\"question\":\"那你帮我升级这个问题\",\"history\":[{\"role\":\"user\",\"content\":\"我现在登不上账号。\"},{\"role\":\"assistant\",\"content\":\"请先完成身份校验并尝试密码重置链接。\"}]}"
-```
-
-### 手动创建工单
-
-```bash
-curl -X POST http://127.0.0.1:8000/tickets ^
-  -H "Content-Type: application/json" ^
-  -d "{\"title\":\"登录受阻\",\"issue\":\"用户在重置后仍无法登录\",\"priority\":\"high\",\"customer_email\":\"vip@example.com\"}"
-```
-
-## 设计说明
-
-### 1. Provider 兼容层
-
-后端定义了一套统一的 `LLMProvider` 接口，并实现了两个适配器：
-
-- `OpenAICompatibleProvider`
-- `AnthropicProvider`
-
-这样做的好处是：  
-Agent 主流程不需要关心不同模型接口的消息格式和工具调用差异，代码更清晰，也更适合在面试中讲解。
-
-### 2. 检索策略
-
-当前版本的检索器是**轻量级、可测试、可解释**的。  
-它采用基于词项重叠的简单打分方式，而不是 embedding + 向量库。
-
-这样做的原因：
-
-- 项目更容易跑通
-- 代码更容易理解
-- 单元测试更稳定
-
-如果以后要增强，可以把这一层替换成：
-
-- embedding 检索
-- 向量数据库
-- 更正式的 RAG 评测流程
-
-### 3. 工单工作流
-
-当前工单状态流比较小，但足够展示业务协同：
-
-- `open`
-- `escalated`
-- `closed`（后续预留）
-
-这样项目就不只是“问答”，而是能把未解决的问题转化为结构化任务。
-
-### 4. 错误处理
-
-模型调用失败时，provider 层会把异常统一包装成应用级错误，API 层会将其返回为 `502`，方便定位：
-
-- API key 配置错误
-- Base URL 错误
-- 网络超时
-- 返回 JSON 非法
-- Provider 返回结构不符合预期
-
-## 面试时建议怎么讲
-
-建议重点强调这几点：
+建议重点讲这几件事：
 
 1. 为什么需要 provider 抽象层
-2. 为什么 Agent 应该先检索再回答
-3. 工具调用如何把问答变成业务流程
-4. 为什么这个项目适合作为 AI 应用开发 MVP
-5. 如果继续扩展，你会优先补什么（评测、embedding、鉴权、日志等）
+2. 为什么 Agent 要先检索再回答
+3. 为什么这个项目不只是聊天，而是“问答 + 工单协同”
+4. 为什么 MVP 阶段先做轻量级 RAG
+5. 如果继续扩展，下一步会优先补什么
+
+## 后续可扩展方向
+
+- 引入 embedding + 向量数据库
+- 增加 session 级会话管理
+- 增加工单状态流转与权限控制
+- 增加日志、评测与 tracing
+- 增加更完整的前端工作台
