@@ -3,16 +3,13 @@
 这是原始 `enterprise_agent_mvp` 的 LangChain 技术栈版本。
 
 ## 目标
-
-保持同样的业务场景不变：
-
+基于langchain开发：
 - 企业知识库问答
 - 多轮支持对话
 - 工单创建 / 查询 / 升级
 - OpenAI 兼容接口与 Anthropic 风格接口切换
 
-但实现方式改成 LangChain 风格：
-
+技术栈
 - `ChatOpenAI` / `ChatAnthropic`
 - `@tool` 工具定义
 - `create_agent(...)` 创建 Agent
@@ -54,7 +51,7 @@ copy .env.example .env
 LLM_PROVIDER=openai_compatible
 OPENAI_API_KEY=your-key
 OPENAI_BASE_URL=https://api.openai.com/v1
-OPENAI_MODEL=gpt-4o-mini
+OPENAI_MODEL=gpt-5.5
 ```
 
 ### Anthropic 风格接口
@@ -63,7 +60,7 @@ OPENAI_MODEL=gpt-4o-mini
 LLM_PROVIDER=anthropic
 ANTHROPIC_API_KEY=your-key
 ANTHROPIC_BASE_URL=https://api.anthropic.com/v1
-ANTHROPIC_MODEL=claude-3-5-sonnet-latest
+ANTHROPIC_MODEL=claude-4.6-sonnet
 ```
 
 如果你使用的是 Anthropic 兼容平台，例如 MiniMax 的 `/anthropic/v1` 风格接口，可把 `ANTHROPIC_BASE_URL` 指向兼容地址。
@@ -79,11 +76,5 @@ uvicorn app.main:app --reload
 - 前端主页：`http://127.0.0.1:8000/`
 - API 文档：`http://127.0.0.1:8000/docs`
 
-## 说明
 
-这个版本重点是帮助你学习：
-
-1. 手写 agent loop 和 LangChain agent 的差别
-2. 工具调用在 LangChain 里是怎么组织的
-3. 同一个业务题目如何迁移到不同技术栈
 
