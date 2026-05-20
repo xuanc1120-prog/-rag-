@@ -31,7 +31,7 @@
 
 仓库同时提供：
 
-- **手写实现版**：更适合理解底层数据流和 Agent Loop
+- **原生实现版**：更适合理解底层数据流和 Agent Loop
 - **LangChain 版**：更适合理解框架式 Agent 开发
 
 面试时可以直接对比说明：
@@ -88,13 +88,11 @@
 ## 目录结构
 
 ```text
-enterprise_agent_mvp/         手写实现版本
+enterprise_agent_mvp/         原生实现版本
 enterprise_agent_langchain/   LangChain 版本
 ```
 
 ## 推荐阅读顺序
-
-如果你是面试官或技术评审，建议这样看：
 
 1. 先看本 README，了解项目目标和结构
 2. 再看 `enterprise_agent_mvp/README.md`
@@ -129,12 +127,3 @@ copy .env.example .env
 uvicorn app.main:app --reload
 ```
 
-## 项目价值
-
-这个仓库不是为了追求大而全，而是围绕一个清晰的业务问题，展示：
-
-- 如何把大模型接入真实业务流程
-- 如何把问答、检索、工具调用和工单流转串起来
-- 如何从“能跑的原型”继续演进到“更像工程项目的结构”
-
-如果你关注的是 AI 应用开发、Agent、RAG 或支持类自动化场景，这个仓库能比较直接地体现相关思路和实现能力。
